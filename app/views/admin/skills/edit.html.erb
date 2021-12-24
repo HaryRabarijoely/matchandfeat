@@ -1,0 +1,10 @@
+<% if @skill.errors.any? %>
+<%= render "shared/error_messages", object: @skill %>
+<% end %>
+
+<div class="container">
+  <h2>Modification</h2>
+  <%= link_to 'Accueil Admin', admin_root_path, class: 'btn btn-info mb-1' %>
+  <%= link_to 'Retour', admin_skills_path, class: 'btn btn-info mb-1' %>
+  <%= render "form" %>
+</div>

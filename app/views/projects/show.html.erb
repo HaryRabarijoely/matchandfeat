@@ -1,0 +1,82 @@
+<div class="container my-4">
+  <div class="card bg-primary border-success">
+
+    <a id="<%= "star_icon_project#{@project.id}" %>" href="<%= like_path(likeable: "project") %>" data-method='patch' data-remote='true' class="btn btn-<%= current_user_has_liked?(@project) ? "warning" : "primary" %> primary position-absolute top-0 start-0 fs-2">
+      <i class="far fa-star"></i>
+      <span id ="<%= "star_counter_project#{@project.id}" %>" class="position-absolute top-0 start-0 translate-middle badge rounded-pill bg-info fs-6">
+        <%= @project.likes.count %>
+        <span class="visually-hidden">Aime ça !</span>
+      </span>
+    </a>
+
+    <div class="row g-0">
+      <div class="col-md-4 mb-0">
+        <% if @project.picture.attached? %>
+        <%= image_tag @project.picture.variant(resize: "600x600"),alt:"#{@project.title}", class:"img-fluid rounded-start w-100" %>
+        <% else %>
+        <%= image_tag 'default.jpg',alt:"#{@project.title}", class:"img-fluid rounded-start w-100" %>
+        <% end %>
+      </div>
+      <div class="col-md-8">
+        <div class="card-body">
+          <h3 class="card-title"><%= @project.title %></h3>
+          <p class="card-text"><small class="text-muted">Crée le : <%= @project.created_at.strftime('%e %b %Y')%> par <%=link_to @project.user.user_name, user_path(@project.user) %></small></p>
+          <% if @project.user == current_user %>
+          <%= link_to "Modifier", edit_project_path(@project),class:"link-modify fs-6" %>
+          <%= link_to "Supprimer", project_path(@project), data: { method: :delete, confirm: "Est tu sûr de vouloir supprimer votre collaboration ?" }, class:"link-delete fs-6" %>
+          <% end%>
+          <p class="card-text"><%= @project.description %></p>
+          <% @project.skills.each do |skill| %>
+          <span class='badge rounded-pill bg-success'><%= skill.name %></span>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <hr>
+    <h3 class="text-center">Fichiers liés à ce projet</h3>
+
+    <%= render "shared/attachments_display", source_object: @project, deletion_possibility: false %>
+
+    <hr>
+    <h3 class="text-center">Feats</h3>
+
+    <div class="field d-flex flex-column align-items-center justify-content-center">
+      <%= form_for([@project, @feat], class:"bg-primary w-100", :method => "post") do |f| %>
+      <div class="form-card-page form-floating d-flex flex-column mt-2">
+        <%= f.text_field :title, placeholder: "Que veux tu apporter ? "%>
+        <%= f.text_area :description, placeholder: "Description du feat...", class:'my-2', required: true %><br />
+        <%= f.file_field :attachments, multiple: true, class: "my-3" %>
+        <%= submit_tag "Je contribue", class:'btn btn-secondary m-2' %>
+      </div>
+      <% end %>
+    </div>
+    <% if @project.feats.count < 1 %>
+    <p>Aucun feat pour le moment... À toi de jouer !</p>
+    <% end %>
+    <% @project.feats.each do |feat| %>
+    <div class="card bg-primary border-top">
+      <div class="card-header">
+        <h4><%= feat.title %></h4>
+        <div class="text-muted small">Posté le : <%= feat.created_at.strftime('%e %b %Y')%> par <%= link_to feat.user.user_name, user_path(feat.user) %></div>
+        <% if feat.user == current_user %>
+        <%= link_to "Modifier", edit_project_feat_path(@project, feat),class:"link-modify fs-6" %>
+        <%= link_to "Supprimer", project_feat_path(@project, feat), data: { method: :delete, confirm: "Est tu sûr de vouloir supprimer ta contribution ?" }, class:"link-delete fs-6" %>
+        <% end%>
+      </div>
+      <div class="card-body">
+        <p class="card-text"><%= feat.description %></p>
+        <a href="<%= like_path(likeable: "feat", id: feat) %>" data-method='patch' data-remote='true' class="btn btn-primary">
+          <span id="like_counter_feat_<%= feat.id %>"><%= feat.likers.count %></span>
+          <i id="like_icon_feat_<%= feat.id %>" class="fa<%= current_user_has_liked?(feat) ? "s" : "r" %> fa-heart"></i>
+        </a>
+      </div>
+      <div class="card-footer text-muted">
+        <%= feat.attachments.count %> Fichiers liés : <% feat.attachments.each do |attachment| %>
+        <%= link_to attachment.filename, rails_blob_path(attachment, disposition: "attachment") %>
+        <% end %>
+      </div>
+    </div>
+    <% end %>
+  </div>
+</div>

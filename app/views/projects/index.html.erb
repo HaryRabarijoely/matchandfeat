@@ -1,0 +1,140 @@
+<%= render "layouts/carousel"%>
+<% if user_signed_in? %>
+<div style="border-top: 1px solid #ecc93c;margin: 20px 0;"></div>
+  <div class="d-flex justify-content-center align-items-center">
+    <div class="dropdown">
+      Afficher les projets par
+      <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+        <%= @sort_type %>
+      </button>
+      <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+        <% @sort_types_list.each do |sort_type, name| %>
+        <li><%= link_to name, projects_path(sort_type: sort_type), class: "dropdown-item" %></li>
+        <% end %>
+      </ul>
+    </div>
+  </div>
+  <div style="border-top: 1px solid #ecc93c;margin: 20px 0;"></div>
+  <div class="container">   
+    <% if @projects.empty? %>
+      <h5>Il n'y a pas de résultat à afficher... Lance ton propre projet <%= link_to "par ici", new_project_path %> !</h5>
+    <% end %>  
+    <% @projects.each do |project| %>
+    <div class="col-12 d-flex one-card-custom">
+      <% if project.picture.attached? %>
+        <%= image_tag project.picture.variant(resize: "400x400"),alt:"#{project.title}", class:"col-lg-3 col-md-12 m-2", style:"border-radius:30px;" %>
+      <% else %>
+        <%= image_tag 'default.jpg',alt:"#{project.title}", class:"col-lg-3 col-md-12 m-2", style:"border-radius:30px;"%>
+      <% end %>   
+      <div class="card w-75 mx-1 my-2 bg-primary border-success">
+        <div class="card-header bg-primary border-success d-flex justify-content-between align-items-center">
+          <h5><%= project.title %></h5>
+            <p class="text-muted"><em>Publié le <%= project.created_at.strftime('%e %b %Y')%></em></p>
+            <p class="text-muted"><em>Par <%= link_to project.user.user_name, user_path(project.user)%></em></p>
+        </div>
+        <div class="card-body bg-primary d-flex flex-column justify-content-around">
+          <div class="mb-1 text-muted">
+            <% project.skills.each do |skill| %>
+            <span class='badge rounded-pill  mx-1'><%= skill.name %></span>
+            <% end %>
+          </div>
+          <p class="text-truncate card-text"><%= project.description %></p>
+          <div class="d-flex justify-content-around">
+            <% if project.feats.count < 1 %>
+                <p><em>Pas de feats sur ce projet</em></p>
+            <% elsif project.feats.count == 1 %>
+                <p><em>1 feat sur ce projet</em></p>
+            <% else %>
+                <p><em><%= project.feats.count%> feats sur ce projet</em></p>
+            <% end %>
+            <a id="<%= "star_icon_project#{project.id}" %>" href="<%= like_path(likeable: "project", id: project.id) %>" data-method='patch' data-remote='true' class="btn btn-<%= current_user_has_liked?(project) ? "warning" : "primary" %> primary">
+                <i class="far fa-star"></i>
+                <span id ="<%= "star_counter_project#{project.id}" %>"><%= project.likes.count %></span>
+            </a>
+            <%= link_to "détails du projet", project_path(project.id), class:"btn btn-success" %>
+          </div>
+        </div>
+      </div>
+    </div>
+    <% end %>
+</div>
+<% else %>
+
+<div style="border-top: 1px solid #ecc93c;margin: 20px 0;"></div>
+<section class="showcase">
+    <div class="container-fluid p-0">
+        <div class="d-flex img_for_presente">
+            <%= image_tag 'instruments.png',alt:"", class:"col-lg-6 order-lg-2 text-white showcase-img", width: "50%"%>
+            <div class="col-lg-6 order-lg-1 my-auto showcase-text">
+                <h1>Première plateforme d'entraide créative</h1>
+                <p class="lead mb-0">Match & Feat est LE lieu de rencontre artistique pour collaboration musicale ! Notre plateforme héberge de nombreux projets "en quête de devenir" et 100% libres de droits.<br />Ils sont inachevés ou ont été postés volontairement à un stade laissant libre cours à la créativité musicale de chacun. L'entraide, le partage, la créativité et la bienveillance sont les maitres mots !</p>
+            </div>
+        </div>
+        <div class="d-flex img_for_presente">
+            <%= image_tag 'guitar.jpg',alt:"", class:"col-lg-6 text-white showcase-img", width: "50%"%>
+            <div class="col-lg-6 my-auto showcase-text">
+                <h1>Mets en lumière ton projet</h1>
+                <p class="lead mb-0">Match&feat est la plateforme idéale pour montrer ton projet au monde entier ! Que tu ais une oeuvre incomplète, un manque d'inspiration ou alors que tu souhaites donner libre court à la créativité des membres, nous sommes là pour toi !<br />Après ton inscription, tu pourras proposer ta maquête, elle sera à disposition de tous nos membres qui pourront venir proposer leur contribution. N'attends plus et laisse la magie opérer !</p>
+            </div>
+        </div>
+        <div class="d-flex img_for_presente">
+            <%= image_tag 'neon.png',alt:"", class:"col-lg-6 order-lg-2 text-white showcase-img", width: "50%"%>
+            <div class="col-lg-6 order-lg-1 my-auto showcase-text">
+                <h1>Mets en lumière ton talent</h1>
+                <p class="lead mb-0">Parcours les nombreux projets inspirants et captivants que nous hébergeons puis apporte ta contribution !<br />Parce que nous pensons que chaque talent doit pouvoir s'exprimer librement et gratuitement, match&feat est la plateforme idéale pour faire connaître ta patte musicale au monde entier !</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div style="border-top: 1px solid #ecc93c;margin: 20px 0;"></div>
+<div class="d-flex flex-column align-items-center">
+  <h3><%= link_to "S'inscrire", new_user_registration_path, class: "nav-link " %></h3>
+  <p>N'attends plus et rejoins la communauté !</p>
+</div>
+
+<div style="border-top: 1px solid #ecc93c;margin: 20px 0;"></div>
+<section class="testimonials text-center">
+    <div class="container">
+        <h2 class="mb-5">Qui se cache derrière</h2>
+        <div class="d-flex justify-content-center flex-wrap">
+            <div class="col-lg-2 m-2">
+                <div href="#" class="testimonial-item mx-auto mb-5 mb-lg-0">
+                    <%= image_tag 'team_flo.jpg',alt:"", class:"img-fluid rounded-circle mb-3" %>
+                    <h5>Flo</h5>
+                    <p class=" mb-0">"Il est le fils spirituel de Gary McKinnon !"</p>
+                </div>
+            </div>
+            <div class="col-lg-2 m-2">
+                <div class="testimonial-item mx-auto mb-5 mb-lg-0">
+                    <%= image_tag 'team_hary.jpg',alt:"", class:"img-fluid rounded-circle mb-3" %>
+                    <h5>Hary</h5>
+                    <p class=" mb-0">"Le cerveau de l'ombre à l'origine du projet."</p>
+                </div>
+            </div>
+            <div class="col-lg-2 m-2">
+                <div class="testimonial-item mx-auto mb-5 mb-lg-0">
+                    <%= image_tag 'team_kevin.jpg',alt:"", class:"img-fluid rounded-circle mb-3" %>
+                    <h5>Kevin</h5>
+                    <p class=" mb-0">"N'est pas grand chose sans Florent!"</p>
+                </div>
+            </div>
+            <div class="col-lg-2 m-2">
+                <div class="testimonial-item mx-auto mb-5 mb-lg-0">
+                    <%= image_tag 'team_jo.jpg',alt:"", class:"img-fluid rounded-circle mb-3" %>
+                    <h5>Joffrey</h5>
+                    <p class=" mb-0">"Un foutu opportuniste qui espère toucher le pactole lors du rachat par Google ou Meta!"</p>
+                </div>
+            </div>
+            <div class="col-lg-2 m-2">
+                <div class="testimonial-item mx-auto mb-5 mb-lg-0">
+                    <%= image_tag 'team_lucas.jpg',alt:"", class:"img-fluid rounded-circle mb-3" %>
+                    <h5>Lucas</h5>
+                    <p class=" mb-0">"Un demi-dieu de la manipulation des images"</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<% end %>

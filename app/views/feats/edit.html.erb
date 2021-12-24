@@ -1,0 +1,16 @@
+<% if @feat.errors.any? %>
+<%= render "shared/error_messages", object: @feat %>
+<% end %>
+
+<div class="d-flex flex-column justify-content-center align-items-center text-center col-12">
+  <div class="col-lg-6">
+    <h1>Modifie ton feat</h1>
+
+    <%= render 'form', feat: @feat, project: @feat.project %>
+
+    <h3>Fichiers liés à ton feat</h3>
+
+    <%= render "shared/attachments_display", source_object: @feat, deletion_possibility: true %>
+    
+  </div>
+</div>

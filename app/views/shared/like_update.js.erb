@@ -1,0 +1,21 @@
+<% if @target.is_a?(Project) %>
+  like_counter = document.getElementById("<%= "star_counter_project#{@target.id}" %>")
+  like_status = document.getElementById("<%= "star_icon_project#{@target.id}" %>")
+  <% if @current_user_like_status == "liked" %>
+    like_status.classList.replace("btn-primary", "btn-warning")
+  <% else %>
+    like_status.classList.replace("btn-warning", "btn-primary")
+  <% end %>
+<% end %>
+
+<% if @target.is_a?(Feat) %>
+  like_counter = document.getElementById("<%= "like_counter_feat_#{@target.id}" %>")
+  like_status = document.getElementById("<%= "like_icon_feat_#{@target.id}" %>")
+  <% if @current_user_like_status == "liked" %>
+    like_status.className = "fas fa-heart"
+  <% else %>
+    like_status.className = "far fa-heart"
+  <% end %>
+<% end %>
+
+like_counter.innerText = <%= @target.likes.count %>
